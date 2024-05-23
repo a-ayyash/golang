@@ -1,4 +1,4 @@
-package day6
+package day62
 
 import (
 	"bufio"
@@ -56,17 +56,17 @@ func parseLine(arr []string) (Operation, Point, Point) {
 }
 
 func main() {
-	file, err := os.Open("data.input")
+	file, err := os.Open("../data.input")
 
 	if err != nil {
 		log.Fatal("error openning the input file for now")
 	}
 
 	scanner := bufio.NewScanner(file)
-	grid := make([][]bool, 1000)
+	grid := make([][]int, 1000)
 
-	for i := range grid {
-		grid[i] = make([]bool, 1000)
+	for i, _ := range grid {
+		grid[i] = make([]int, 1000)
 	}
 
 	for scanner.Scan() {
@@ -74,21 +74,13 @@ func main() {
 		line_arr := strings.Split(line, " ")
 		operation_type, starting_point, finish_point := parseLine(line_arr)
 
-		if starting_point.x > finish_point.x {
-			fmt.Println("Greater X was found")
-		}
-
-		if starting_point.y > finish_point.y {
-			fmt.Println("Greater Y was found")
-		}
-
 		switch {
 		case operation_type.on:
 			{
 				//fmt.Printf("ON: (%d, %d) TO (%d, %d)", starting_point.x, starting_point.y, finish_point.x, finish_point.y)
 				for i := starting_point.x; i <= finish_point.x; i++ {
 					for j := starting_point.y; j <= finish_point.y; j++ {
-						grid[i][j] = true
+						grid[i][j] = grid[i][j] + 1
 					}
 				}
 			}
@@ -97,7 +89,9 @@ func main() {
 				//fmt.Printf("OFF: (%d, %d) TO (%d, %d)", starting_point.x, starting_point.y, finish_point.x, finish_point.y)
 				for i := starting_point.x; i <= finish_point.x; i++ {
 					for j := starting_point.y; j <= finish_point.y; j++ {
-						grid[i][j] = false
+						if grid[i][j]-1 >= 0 {
+							grid[i][j] = grid[i][j] - 1
+						}
 					}
 				}
 			}
@@ -106,7 +100,7 @@ func main() {
 				//fmt.Printf("TOGGLE: (%d, %d) TO (%d, %d)", starting_point.x, starting_point.y, finish_point.x, finish_point.y)
 				for i := starting_point.x; i <= finish_point.x; i++ {
 					for j := starting_point.y; j <= finish_point.y; j++ {
-						grid[i][j] = !grid[i][j]
+						grid[i][j] = grid[i][j] + 2
 					}
 				}
 			}
@@ -118,9 +112,7 @@ func main() {
 
 	for i := 0; i < 1000; i++ {
 		for j := 0; j < 1000; j++ {
-			if grid[i][j] == true {
-				counter++
-			}
+			counter += grid[i][j]
 		}
 	}
 
